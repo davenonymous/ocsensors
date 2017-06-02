@@ -1,0 +1,2 @@
+tile.ocsensors.sensor.name=Sensor
+tile.ocsensors.sensor.tooltip=Used to read information like energy, inventory contents etc from remote blocks.

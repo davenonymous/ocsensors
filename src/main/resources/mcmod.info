@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ocsensors",
+  "name": "OpenComputers Sensors",
+  "description": "Sensor Mod for OpenComputers",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Davenonymous"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
