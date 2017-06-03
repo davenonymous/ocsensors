@@ -65,25 +65,46 @@ public class ConfigurationHandler {
                 "Disable the search method altogether"
         );
 
+        SensorSettings.disableScanPause = configuration.getBoolean(
+                "disableScanPause",
+                CATEGORY_SENSOR,
+                false,
+                "Disable all artificial pauses when scanning. You should rather adjust the pause times!"
+        );
+
+        SensorSettings.disableSearchPause = configuration.getBoolean(
+                "disableSearchPause",
+                CATEGORY_SENSOR,
+                false,
+                "Disable all artificial pauses when searching. You should rather adjust the pause time!"
+        );
+
         SensorSettings.pauseForAirBlock = configuration.getFloat(
                 "pauseForAir",
                 CATEGORY_SENSOR,
-                0.1f, 0.0f, 4.0f,
+                0.02f, 0.0f, 4.0f,
                 "How long it takes to scan an air block in seconds"
         );
 
         SensorSettings.pauseForBlock = configuration.getFloat(
                 "pauseForBlock",
                 CATEGORY_SENSOR,
-                0.25f, 0.0f, 4.0f,
+                0.05f, 0.0f, 4.0f,
                 "How long it takes to scan a normal block in seconds"
         );
 
         SensorSettings.pauseForTileEntity = configuration.getFloat(
                 "pauseForTileEntity",
                 CATEGORY_SENSOR,
-                0.5f, 0.0f, 4.0f,
+                0.1f, 0.0f, 4.0f,
                 "How long it takes to scan a tile entity in seconds (additive with pauseForBlock)"
+        );
+
+        SensorSettings.pauseForSearchPerBlock = configuration.getFloat(
+                "pauseForSearchPerBlock",
+                CATEGORY_SENSOR,
+                0.0001f, 0.0f, 1.0f,
+                "Each block being scanned increases the search time by this amount"
         );
 
         if(configuration.hasChanged()) {
@@ -97,6 +118,10 @@ public class ConfigurationHandler {
         public static float pauseForAirBlock;
         public static float pauseForBlock;
         public static float pauseForTileEntity;
+        public static float pauseForSearchPerBlock;
+
         public static boolean disableSearch;
+        public static boolean disableScanPause;
+        public static boolean disableSearchPause;
     }
 }

@@ -64,17 +64,23 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
         }
 
         if(!this.getWorld().isAirBlock(pos)) {
-            context.pause(ConfigurationHandler.SensorSettings.pauseForBlock);
+            if(!ConfigurationHandler.SensorSettings.disableScanPause) {
+                context.pause(ConfigurationHandler.SensorSettings.pauseForBlock);
+            }
             ItemStack stack = block.getPickBlock(state, null, this.getWorld(), pos, null);
             blockInfo.put("label", stack.getDisplayName());
         } else {
-            context.pause(ConfigurationHandler.SensorSettings.pauseForAirBlock);
+            if(!ConfigurationHandler.SensorSettings.disableScanPause) {
+                context.pause(ConfigurationHandler.SensorSettings.pauseForAirBlock);
+            }
         }
 
         TileEntity entity = this.getWorld().getTileEntity(pos);
         HashMap blockData = null;
         if(entity != null) {
-            context.pause(ConfigurationHandler.SensorSettings.pauseForTileEntity);
+            if(!ConfigurationHandler.SensorSettings.disableScanPause) {
+                context.pause(ConfigurationHandler.SensorSettings.pauseForTileEntity);
+            }
             blockData = IntegrationRegistry.getDataForTileEntity(entity, side);
         }
 
@@ -132,7 +138,7 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
                         continue;
                     }
 
-                    totalSleep += 0.0001f;
+                    totalSleep += ConfigurationHandler.SensorSettings.pauseForSearchPerBlock;
 
                     BlockPos pos = new BlockPos(x,y,z);
                     IBlockState state = this.getWorld().getBlockState(pos);
@@ -157,7 +163,6 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
                         }
                     }
 
-                    Logz.info("Adding %s to result", block.getRegistryName());
                     HashMap<String, Integer> posMap = new HashMap<>();
                     posMap.put("x", xDelta);
                     posMap.put("y", yDelta);
@@ -167,7 +172,9 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
             }
         }
 
-        context.pause(totalSleep);
+        if(!ConfigurationHandler.SensorSettings.disableSearchPause) {
+            context.pause(totalSleep);
+        }
 
         return new Object[]{ result };
     }
