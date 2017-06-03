@@ -1,7 +1,8 @@
 {
 	"credit": "Made with Blockbench, a free, modern block model editor by JannisX11",
 	"textures": {
-		"0": "ocsensors:blocks/sensor"
+		"0": "ocsensors:blocks/sensor",
+		"particle": "ocsensors:blocks/sensor"
 	},
 	"elements": [
 		{
