@@ -13,7 +13,6 @@ import org.dave.ocsensors.base.TileEntitySidedEnvironmentBase;
 import org.dave.ocsensors.integration.AbstractIntegration;
 import org.dave.ocsensors.integration.IntegrationRegistry;
 import org.dave.ocsensors.misc.ConfigurationHandler;
-import org.dave.ocsensors.utility.Logz;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,12 +62,19 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
             blockInfo.put("redstonePower", redstonePower);
         }
 
+
         if(!this.getWorld().isAirBlock(pos)) {
             if(!ConfigurationHandler.SensorSettings.disableScanPause) {
                 context.pause(ConfigurationHandler.SensorSettings.pauseForBlock);
             }
             ItemStack stack = block.getPickBlock(state, null, this.getWorld(), pos, null);
-            blockInfo.put("label", stack.getDisplayName());
+            // TODO: 1.11.2 itemstack is empty
+            if(stack != null) {
+                blockInfo.put("label", stack.getDisplayName());
+            } else {
+                blockInfo.put("label", block.getRegistryName());
+            }
+
         } else {
             if(!ConfigurationHandler.SensorSettings.disableScanPause) {
                 context.pause(ConfigurationHandler.SensorSettings.pauseForAirBlock);
@@ -76,7 +82,7 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
         }
 
         TileEntity entity = this.getWorld().getTileEntity(pos);
-        HashMap blockData = null;
+        Map<String, Object> blockData = null;
         if(entity != null) {
             if(!ConfigurationHandler.SensorSettings.disableScanPause) {
                 context.pause(ConfigurationHandler.SensorSettings.pauseForTileEntity);

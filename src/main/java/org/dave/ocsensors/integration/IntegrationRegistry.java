@@ -8,8 +8,8 @@ import org.dave.ocsensors.utility.Logz;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class IntegrationRegistry {
     private static List<AbstractIntegration> integrations = new ArrayList<>();
@@ -17,27 +17,27 @@ public class IntegrationRegistry {
     public static void registerIntegrations(ASMDataTable asmData) {
         for(AbstractIntegration integration : AnnotatedInstanceUtil.getIntegrations(asmData)) {
             Logz.info("Registered integration class: %s", integration.getClass());
+            integration.init();
             integrations.add(integration);
         }
     }
 
-    public static HashMap<String, Object> getDataForTileEntity(TileEntity entity, @Nullable EnumFacing side) {
-        HashMap<String, Object> result = new HashMap<>();
-
+    public static Map<String, Object> getDataForTileEntity(TileEntity entity, @Nullable EnumFacing side) {
+        ScanDataList result = new ScanDataList();
         for(AbstractIntegration integration : integrations) {
             if(!integration.worksWith(entity, side)) {
                 continue;
             }
 
-            result.put(integration.getSectionName(), integration.getScanData(entity, side));
+            integration.addScanData(result, entity, side);
         }
 
-        return result;
+        return result.getData();
     }
 
     public static AbstractIntegration getIntegrationByName(String name) {
         for(AbstractIntegration integration : integrations) {
-            if(integration.getSectionName().equalsIgnoreCase(name)) {
+            if(integration.supportsPrefix(integration.getClass(), name)) {
                 return integration;
             }
         }

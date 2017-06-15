@@ -12,6 +12,7 @@ public class ConfigurationHandler {
 
     public static File configDir;
     public static File nbtDataDir;
+    public static File reflectionDataDir;
 
     private static final String CATEGORY_SENSOR = "Sensor";
 
@@ -28,6 +29,11 @@ public class ConfigurationHandler {
         nbtDataDir = new File(configDir, "nbt");
         if(!nbtDataDir.exists()) {
             nbtDataDir.mkdirs();
+        }
+
+        reflectionDataDir = new File(configDir, "reflection");
+        if(!reflectionDataDir.exists()) {
+            reflectionDataDir.mkdirs();
         }
 
         configuration = new Configuration(new File(configDir, "settings.cfg"), null);

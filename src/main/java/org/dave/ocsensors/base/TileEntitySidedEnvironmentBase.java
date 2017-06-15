@@ -24,7 +24,6 @@ public abstract class TileEntitySidedEnvironmentBase extends TileEntityBase impl
         super.initialize();
 
         Network.joinOrCreateNetwork(this);
-        Logz.info("This network is now: %s", node);
     }
 
     @Override

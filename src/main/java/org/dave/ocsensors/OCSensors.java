@@ -23,10 +23,11 @@ public class OCSensors {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        ConfigurationHandler.init(event.getSuggestedConfigurationFile());
+
         // TODO: Collect integrations here, register them in postInit, so we are sure all mods and their stuff is loaded for verification etc
         IntegrationRegistry.registerIntegrations(event.getAsmData());
 
-        ConfigurationHandler.init(event.getSuggestedConfigurationFile());
         MinecraftForge.EVENT_BUS.register(new ConfigurationHandler());
 
         proxy.preInit(event);

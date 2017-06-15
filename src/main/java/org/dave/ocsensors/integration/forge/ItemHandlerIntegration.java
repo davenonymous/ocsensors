@@ -7,33 +7,32 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.dave.ocsensors.integration.AbstractCapabilityIntegration;
+import org.dave.ocsensors.integration.AbstractIntegration;
 import org.dave.ocsensors.integration.Integrate;
+import org.dave.ocsensors.integration.ScanDataList;
 
 import javax.annotation.Nullable;
 
 @Integrate
 public class ItemHandlerIntegration extends AbstractCapabilityIntegration {
     @Override
-    public String getSectionName() {
-        return "items";
-    }
-
-    @Override
     protected Capability getCompatibleCapability() {
         return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
     }
 
     @Override
-    public Object getScanData(TileEntity entity, @Nullable EnumFacing side) {
+    public void init() {
+        AbstractIntegration.addSupportedPrefix(ItemHandlerIntegration.class, "items");
+    }
+
+    @Override
+    public void addScanData(ScanDataList data, TileEntity entity, @Nullable EnumFacing side) {
         IItemHandler itemHandler = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
 
         ItemStack[] allStacks = new ItemStack[itemHandler.getSlots()];
         for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
             allStacks[slot] = itemHandler.getStackInSlot(slot);
         }
-
-        return allStacks;
+        data.add("items", allStacks);
     }
-
-
 }
