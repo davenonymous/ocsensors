@@ -1,0 +1,26 @@
+[
+  {
+    "class": "net.minecraft.tileentity.TileEntityFurnace",
+    "prefix": "Furnace",
+    "rules": {
+      "BurnTime": "int[BurnTime]",
+      "CookTime": "int[CookTime]",
+      "CookTimeTotal": "int[CookTimeTotal]"
+    }
+  },
+
+  {
+    "class": "net.minecraft.tileentity.TileEntityMobSpawner",
+    "prefix": "Spawner",
+    "rules": {
+      "Delay": "short[Delay]",
+      "MinSpawnDelay": "short[MinSpawnDelay]",
+      "MaxSpawnDelay": "short[MaxSpawnDelay]",
+      "SpawnCount": "short[SpawnCount]",
+      "MaxNearbyEntities": "short[MaxNearbyEntities]",
+      "RequiredPlayerRange": "short[RequiredPlayerRange]",
+      "SpawnRange": "short[SpawnRange]",
+      "Entity": "SpawnData/string[id]"
+    }
+  }
+]

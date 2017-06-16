@@ -4,6 +4,8 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.dave.ocsensors.OCSensors;
+import org.dave.ocsensors.utility.JarExtract;
+import org.dave.ocsensors.utility.Logz;
 
 import java.io.File;
 
@@ -29,11 +31,17 @@ public class ConfigurationHandler {
         nbtDataDir = new File(configDir, "nbt");
         if(!nbtDataDir.exists()) {
             nbtDataDir.mkdirs();
+
+            int count = JarExtract.copy("assets/ocsensors/config/nbt", nbtDataDir);
+            Logz.info("Extracted %d nbt integration configs", count);
         }
 
         reflectionDataDir = new File(configDir, "reflection");
         if(!reflectionDataDir.exists()) {
             reflectionDataDir.mkdirs();
+
+            int count = JarExtract.copy("assets/ocsensors/config/reflection", reflectionDataDir);
+            Logz.info("Extracted %d reflection integration configs", count);
         }
 
         configuration = new Configuration(new File(configDir, "settings.cfg"), null);

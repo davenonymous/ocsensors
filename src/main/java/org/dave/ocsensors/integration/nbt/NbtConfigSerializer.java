@@ -2,7 +2,6 @@ package org.dave.ocsensors.integration.nbt;
 
 import com.google.gson.*;
 import org.dave.ocsensors.integration.AbstractIntegration;
-import org.dave.ocsensors.integration.reflection.ReflectionIntegration;
 import org.dave.ocsensors.utility.Logz;
 
 import java.lang.reflect.Type;

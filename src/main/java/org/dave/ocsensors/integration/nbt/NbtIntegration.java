@@ -26,6 +26,10 @@ public class NbtIntegration extends AbstractIntegration {
 
     @Override
     public void init() {
+        reloadConfigs();
+    }
+
+    public void reloadConfigs() {
         this.mappings = new HashMap<>();
 
         if(!ConfigurationHandler.nbtDataDir.exists()) {

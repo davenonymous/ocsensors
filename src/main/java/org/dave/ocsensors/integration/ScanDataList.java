@@ -1,8 +1,6 @@
 package org.dave.ocsensors.integration;
 
 
-import org.dave.ocsensors.utility.Logz;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

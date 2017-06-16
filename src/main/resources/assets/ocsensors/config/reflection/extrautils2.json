@@ -1,0 +1,17 @@
+[
+  {
+    "class": "com.rwtema.extrautils2.machine.TileMachine",
+    "prefix": "extrautils2",
+
+    "methods": {
+      "isProcessing": "isProcessing"
+    },
+    "privateFields": {
+      "processTime": "processTime"
+    },
+    "fields": {
+      "energyOutput": "energyOutput",
+      "totalTime": "totalTime"
+    }
+  }
+]
