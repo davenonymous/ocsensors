@@ -1,6 +1,5 @@
 package org.dave.ocsensors.proxy;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -12,13 +11,13 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
 
-        registerItemBlockRenderer(Blockss.sensor);
+        registerItemBlockRenderer();
 
         Blockss.initModels();
     }
 
-    private void registerItemBlockRenderer(Block block) {
-        Item item = Item.getItemFromBlock(block);
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
+    private void registerItemBlockRenderer() {
+        Item item = Item.getItemFromBlock(Blockss.sensor);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, 0, new ModelResourceLocation("ocsensors:sensordishcombined", "inventory"));
     }
 }
