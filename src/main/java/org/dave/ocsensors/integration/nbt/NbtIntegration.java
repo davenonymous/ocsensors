@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Integrate
+@Integrate(name = "nbt")
 public class NbtIntegration extends AbstractIntegration {
     private static Pattern pathRegex = Pattern.compile("(.*?)\\[(.*?)\\]");
     private static Map<Class, Map<String, String>> mappings;

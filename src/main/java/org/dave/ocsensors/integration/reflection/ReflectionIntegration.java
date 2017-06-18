@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Integrate
+@Integrate(name = "reflection")
 public class ReflectionIntegration extends AbstractIntegration {
     private static Map<Class, Map<String, String>> methodMappings;
     private static Map<Class, Map<String, String>> fieldMappings;

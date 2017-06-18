@@ -19,7 +19,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@Integrate
+@Integrate(name = "javascript")
 public class NashornIntegration extends AbstractIntegration {
     private List<Invocable> scripts;
 

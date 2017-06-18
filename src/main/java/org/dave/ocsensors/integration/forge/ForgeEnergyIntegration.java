@@ -10,7 +10,7 @@ import org.dave.ocsensors.integration.*;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 
-@Integrate
+@Integrate(name = "energy")
 public class ForgeEnergyIntegration extends AbstractCapabilityIntegration {
     @Override
     protected Capability getCompatibleCapability() {

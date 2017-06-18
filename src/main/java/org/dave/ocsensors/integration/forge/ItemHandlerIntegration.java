@@ -10,7 +10,7 @@ import org.dave.ocsensors.integration.*;
 
 import javax.annotation.Nullable;
 
-@Integrate
+@Integrate(name = "items")
 public class ItemHandlerIntegration extends AbstractCapabilityIntegration {
     @Override
     protected Capability getCompatibleCapability() {

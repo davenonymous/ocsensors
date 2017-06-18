@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Integrate
+@Integrate(name = "fluid")
 public class FluidHandlerIntegration extends AbstractCapabilityIntegration {
     @Override
     protected Capability getCompatibleCapability() {

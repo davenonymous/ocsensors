@@ -4,10 +4,13 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.dave.ocsensors.OCSensors;
+import org.dave.ocsensors.integration.IntegrationRegistry;
 import org.dave.ocsensors.utility.JarExtract;
 import org.dave.ocsensors.utility.Logz;
+import scala.actors.threadpool.Arrays;
 
 import java.io.File;
+import java.util.List;
 
 public class ConfigurationHandler {
     public static Configuration configuration;
@@ -18,6 +21,7 @@ public class ConfigurationHandler {
     public static File nashornDataDir;
 
     private static final String CATEGORY_SENSOR = "Sensor";
+    private static final String CATEGORY_INTEGRATIONS = "Integration";
 
     public static void init(File configFile) {
         if(configuration != null) {
@@ -130,9 +134,20 @@ public class ConfigurationHandler {
                 "Each block being scanned increases the search time by this amount"
         );
 
+        IntegrationSettings.disabledIntegrations = Arrays.asList(configuration.getStringList(
+                "disabledIntegrations",
+                CATEGORY_INTEGRATIONS,
+                new String[] {"javascript"},
+                "These integrations are not being loaded. Changing this requires restarting the game!"
+        ));
+
         if(configuration.hasChanged()) {
             configuration.save();
         }
+    }
+
+    public static class IntegrationSettings {
+        public static List<String> disabledIntegrations;
     }
 
     public static class SensorSettings {
