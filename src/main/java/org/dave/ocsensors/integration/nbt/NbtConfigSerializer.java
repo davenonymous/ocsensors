@@ -1,7 +1,7 @@
 package org.dave.ocsensors.integration.nbt;
 
 import com.google.gson.*;
-import org.dave.ocsensors.integration.AbstractIntegration;
+import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.utility.Logz;
 
 import java.lang.reflect.Type;
@@ -45,7 +45,7 @@ public class NbtConfigSerializer implements JsonDeserializer<NbtConfig> {
             String prefix = "";
             if(teObject.has("prefix")) {
                 String rawPrefix = teObject.get("prefix").getAsString();
-                AbstractIntegration.addSupportedPrefix(NbtIntegration.class, rawPrefix);
+                PrefixRegistry.addSupportedPrefix(NbtIntegration.class, rawPrefix);
                 prefix =  rawPrefix + ".";
             }
 

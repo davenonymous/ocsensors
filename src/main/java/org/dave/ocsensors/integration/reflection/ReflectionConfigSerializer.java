@@ -1,7 +1,7 @@
 package org.dave.ocsensors.integration.reflection;
 
 import com.google.gson.*;
-import org.dave.ocsensors.integration.AbstractIntegration;
+import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.utility.Logz;
 
 import java.lang.reflect.Type;
@@ -41,7 +41,7 @@ public class ReflectionConfigSerializer implements JsonDeserializer<ReflectionCo
             String prefix = "";
             if(teObject.has("prefix")) {
                 String rawPrefix = teObject.get("prefix").getAsString();
-                AbstractIntegration.addSupportedPrefix(ReflectionIntegration.class, rawPrefix);
+                PrefixRegistry.addSupportedPrefix(ReflectionIntegration.class, rawPrefix);
                 prefix =  rawPrefix + ".";
             }
 

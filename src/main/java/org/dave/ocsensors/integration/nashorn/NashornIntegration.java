@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import org.dave.ocsensors.integration.AbstractIntegration;
 import org.dave.ocsensors.integration.Integrate;
+import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.integration.ScanDataList;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.utility.Logz;
@@ -23,12 +24,9 @@ public class NashornIntegration extends AbstractIntegration {
     private List<Invocable> scripts;
 
     @Override
-    public void init() {
-        reloadScripts();
-    }
-
-    public void reloadScripts() {
+    public void reload() {
         scripts = new ArrayList<>();
+        PrefixRegistry.clearSupportedPrefixes(NashornIntegration.class);
 
         if(!ConfigurationHandler.nashornDataDir.exists()) {
             return;
@@ -46,7 +44,7 @@ public class NashornIntegration extends AbstractIntegration {
                 if(supportedPrefixes != null) {
                     for (Object prefix : supportedPrefixes.values()) {
                         Logz.info("   > Supporting prefix: %s", prefix);
-                        AbstractIntegration.addSupportedPrefix(NashornIntegration.class, (String) prefix);
+                        PrefixRegistry.addSupportedPrefix(NashornIntegration.class, (String) prefix);
                     }
                 }
             } catch (ScriptException e) {

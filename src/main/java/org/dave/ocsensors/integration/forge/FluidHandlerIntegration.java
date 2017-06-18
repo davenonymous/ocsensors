@@ -6,10 +6,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import org.dave.ocsensors.integration.AbstractCapabilityIntegration;
-import org.dave.ocsensors.integration.AbstractIntegration;
-import org.dave.ocsensors.integration.Integrate;
-import org.dave.ocsensors.integration.ScanDataList;
+import org.dave.ocsensors.integration.*;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -25,7 +22,7 @@ public class FluidHandlerIntegration extends AbstractCapabilityIntegration {
 
     @Override
     public void init() {
-        AbstractIntegration.addSupportedPrefix(FluidHandlerIntegration.class, "fluid");
+        PrefixRegistry.addSupportedPrefix(FluidHandlerIntegration.class, "fluid");
     }
 
     @Override

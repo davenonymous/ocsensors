@@ -6,10 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.dave.ocsensors.integration.AbstractCapabilityIntegration;
-import org.dave.ocsensors.integration.AbstractIntegration;
-import org.dave.ocsensors.integration.Integrate;
-import org.dave.ocsensors.integration.ScanDataList;
+import org.dave.ocsensors.integration.*;
 
 import javax.annotation.Nullable;
 
@@ -22,7 +19,7 @@ public class ItemHandlerIntegration extends AbstractCapabilityIntegration {
 
     @Override
     public void init() {
-        AbstractIntegration.addSupportedPrefix(ItemHandlerIntegration.class, "items");
+        PrefixRegistry.addSupportedPrefix(ItemHandlerIntegration.class, "items");
     }
 
     @Override

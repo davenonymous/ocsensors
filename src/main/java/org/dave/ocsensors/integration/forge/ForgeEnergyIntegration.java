@@ -5,10 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import org.dave.ocsensors.integration.AbstractCapabilityIntegration;
-import org.dave.ocsensors.integration.AbstractIntegration;
-import org.dave.ocsensors.integration.Integrate;
-import org.dave.ocsensors.integration.ScanDataList;
+import org.dave.ocsensors.integration.*;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -22,7 +19,7 @@ public class ForgeEnergyIntegration extends AbstractCapabilityIntegration {
 
     @Override
     public void init() {
-        AbstractIntegration.addSupportedPrefix(ForgeEnergyIntegration.class, "energy");
+        PrefixRegistry.addSupportedPrefix(ForgeEnergyIntegration.class, "energy");
     }
 
     @Override

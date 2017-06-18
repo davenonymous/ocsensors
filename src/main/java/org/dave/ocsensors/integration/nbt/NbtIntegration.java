@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import org.dave.ocsensors.integration.AbstractIntegration;
 import org.dave.ocsensors.integration.Integrate;
+import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.integration.ScanDataList;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.utility.Logz;
@@ -25,12 +26,9 @@ public class NbtIntegration extends AbstractIntegration {
     private static Map<Class, Map<String, String>> mappings;
 
     @Override
-    public void init() {
-        reloadConfigs();
-    }
-
-    public void reloadConfigs() {
+    public void reload() {
         this.mappings = new HashMap<>();
+        PrefixRegistry.clearSupportedPrefixes(NbtIntegration.class);
 
         if(!ConfigurationHandler.nbtDataDir.exists()) {
             return;

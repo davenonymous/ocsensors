@@ -6,6 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.dave.ocsensors.integration.AbstractIntegration;
 import org.dave.ocsensors.integration.Integrate;
+import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.integration.ScanDataList;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.utility.Logz;
@@ -26,14 +27,11 @@ public class ReflectionIntegration extends AbstractIntegration {
     private static Map<Class, Map<String, String>> privateFieldMappings;
 
     @Override
-    public void init() {
-        reloadConfigs();
-    }
-
-    public void reloadConfigs() {
+    public void reload() {
         this.methodMappings = new HashMap<>();
         this.fieldMappings = new HashMap<>();
         this.privateFieldMappings = new HashMap<>();
+        PrefixRegistry.clearSupportedPrefixes(ReflectionIntegration.class);
 
         if(!ConfigurationHandler.reflectionDataDir.exists()) {
             return;

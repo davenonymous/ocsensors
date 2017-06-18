@@ -7,6 +7,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import org.dave.ocsensors.command.CommandOCSensors;
 import org.dave.ocsensors.init.Blockss;
 import org.dave.ocsensors.init.Recipes;
 import org.dave.ocsensors.integration.IntegrationRegistry;
@@ -45,5 +47,10 @@ public class OCSensors {
         Recipes.init();
 
         proxy.postInit(event);
+    }
+
+    @EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandOCSensors());
     }
 }

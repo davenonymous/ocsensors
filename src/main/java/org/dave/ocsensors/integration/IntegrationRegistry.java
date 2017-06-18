@@ -16,9 +16,17 @@ public class IntegrationRegistry {
 
     public static void registerIntegrations(ASMDataTable asmData) {
         for(AbstractIntegration integration : AnnotatedInstanceUtil.getIntegrations(asmData)) {
-            Logz.info("Registered integration class: %s", integration.getClass());
+            Logz.info("Registering integration class: %s", integration.getClass());
             integration.init();
+            integration.reload();
+
             integrations.add(integration);
+        }
+    }
+
+    public static void reloadIntegrations() {
+        for(AbstractIntegration integration : integrations) {
+            integration.reload();
         }
     }
 
@@ -37,7 +45,7 @@ public class IntegrationRegistry {
 
     public static AbstractIntegration getIntegrationByName(String name) {
         for(AbstractIntegration integration : integrations) {
-            if(integration.supportsPrefix(integration.getClass(), name)) {
+            if(PrefixRegistry.supportsPrefix(integration.getClass(), name)) {
                 return integration;
             }
         }
