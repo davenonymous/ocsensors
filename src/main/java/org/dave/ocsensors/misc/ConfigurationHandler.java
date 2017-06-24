@@ -4,12 +4,11 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.dave.ocsensors.OCSensors;
-import org.dave.ocsensors.integration.IntegrationRegistry;
 import org.dave.ocsensors.utility.JarExtract;
 import org.dave.ocsensors.utility.Logz;
-import scala.actors.threadpool.Arrays;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class ConfigurationHandler {
