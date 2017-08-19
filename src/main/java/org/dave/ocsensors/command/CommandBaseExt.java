@@ -44,7 +44,7 @@ public abstract class CommandBaseExt extends CommandBase {
             result += this.getParentCommand().getParentConcatenation(delim) + delim;
         }
 
-        result += this.getCommandName();
+        result += this.getName();
         return result;
     }
 
@@ -53,12 +53,12 @@ public abstract class CommandBaseExt extends CommandBase {
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return "commands." + this.getFullCommandName() + ".usage";
     }
 
     public WrongUsageException getUsageException(ICommandSender sender) {
-        return new WrongUsageException(this.getCommandUsage(sender));
+        return new WrongUsageException(this.getUsage(sender));
     }
 
     public SyntaxErrorException getException(ICommandSender sender, String type) {

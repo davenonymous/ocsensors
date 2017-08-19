@@ -38,7 +38,7 @@ public class TESRSensor extends TileEntitySpecialRenderer<TileEntitySensor> {
     }
 
     @Override
-    public void renderTileEntityAt(TileEntitySensor te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(TileEntitySensor te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
 

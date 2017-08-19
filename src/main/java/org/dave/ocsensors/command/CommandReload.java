@@ -9,7 +9,7 @@ import org.dave.ocsensors.integration.IntegrationRegistry;
 
 public class CommandReload extends CommandBaseExt {
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "reload";
     }
 
@@ -21,6 +21,6 @@ public class CommandReload extends CommandBaseExt {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         IntegrationRegistry.reloadIntegrations();
-        sender.addChatMessage(new TextComponentString("Reloaded integration configs"));
+        sender.sendMessage(new TextComponentString("Reloaded integration configs"));
     }
 }

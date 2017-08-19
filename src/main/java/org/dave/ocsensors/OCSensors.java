@@ -9,13 +9,11 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.dave.ocsensors.command.CommandOCSensors;
-import org.dave.ocsensors.init.Blockss;
-import org.dave.ocsensors.init.Recipes;
 import org.dave.ocsensors.integration.IntegrationRegistry;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.proxy.CommonProxy;
 
-@Mod(modid = OCSensors.MODID, version = OCSensors.VERSION, dependencies = "required-after:OpenComputers")
+@Mod(modid = OCSensors.MODID, version = OCSensors.VERSION, dependencies = "required-after:opencomputers", acceptedMinecraftVersions = "[1.12,1.13)")
 public class OCSensors {
     public static final String MODID = "ocsensors";
     public static final String VERSION = "1.0.0";
@@ -37,15 +35,11 @@ public class OCSensors {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        Blockss.init();
-
         proxy.init(event);
     }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        Recipes.init();
-
         proxy.postInit(event);
     }
 

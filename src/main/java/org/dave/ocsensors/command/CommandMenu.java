@@ -32,7 +32,7 @@ public abstract class CommandMenu extends CommandBaseExt {
 
         subcommand.setParentCommand(this);
         this.subcommands.add(subcommand);
-        this.commands.add(subcommand.getCommandName());
+        this.commands.add(subcommand.getName());
     }
 
     @Override
@@ -45,7 +45,7 @@ public abstract class CommandMenu extends CommandBaseExt {
         boolean found = false;
         if(args.length > 0) {
             for(CommandBaseExt cmd : subcommands) {
-                if(cmd.getCommandName().equalsIgnoreCase(args[0])) {
+                if(cmd.getName().equalsIgnoreCase(args[0])) {
                     found = true;
                     if(cmd.checkPermission(server, sender)) {
                         String[] remaining = Arrays.copyOfRange(args, 1, args.length);
@@ -57,7 +57,7 @@ public abstract class CommandMenu extends CommandBaseExt {
         }
 
         if(found) {
-            sender.addChatMessage(new TextComponentTranslation("commands.ocsensors.denied"));
+            sender.sendMessage(new TextComponentTranslation("commands.ocsensors.denied"));
             return;
         }
 
@@ -69,7 +69,7 @@ public abstract class CommandMenu extends CommandBaseExt {
             for(CommandBaseExt cmd : subcommands) {
                 boolean allowed = cmd.checkPermission(server, sender);
                 String color = "" + (allowed ? TextFormatting.GREEN : TextFormatting.DARK_RED);
-                tc.appendSibling(new TextComponentString("\n" + color + cmd.getCommandName() + " "));
+                tc.appendSibling(new TextComponentString("\n" + color + cmd.getName() + " "));
                 TextComponentTranslation tt = new TextComponentTranslation(cmd.getCommandDescription(sender));
                 tt.getStyle().setColor(TextFormatting.GRAY);
                 tt.getStyle().setUnderlined(false);
@@ -77,23 +77,23 @@ public abstract class CommandMenu extends CommandBaseExt {
                 tc.appendSibling(new TextComponentString("" + TextFormatting.RESET));
             }
 
-            sender.addChatMessage(tc);
+            sender.sendMessage(tc);
         }
     }
 
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if (args.length == 1) {
             return getListOfStringsMatchingLastWord(args, commands);
         } else if(args.length > 1) {
             for(CommandBase cmd : subcommands) {
-                if (cmd.getCommandName().equalsIgnoreCase(args[0]) && cmd.checkPermission(server, sender)) {
+                if (cmd.getName().equalsIgnoreCase(args[0]) && cmd.checkPermission(server, sender)) {
                     String[] remaining = Arrays.copyOfRange(args, 1, args.length);
-                    return cmd.getTabCompletionOptions(server, sender, remaining, pos);
+                    return cmd.getTabCompletions(server, sender, remaining, pos);
                 }
             }
         }
 
-        return super.getTabCompletionOptions(server, sender, args, pos);
+        return super.getTabCompletions(server, sender, args, pos);
     }
 }

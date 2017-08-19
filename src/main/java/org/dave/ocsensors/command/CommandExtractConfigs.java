@@ -10,7 +10,7 @@ import org.dave.ocsensors.utility.JarExtract;
 
 public class CommandExtractConfigs extends CommandBaseExt {
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "extract-configs";
     }
 
@@ -22,12 +22,12 @@ public class CommandExtractConfigs extends CommandBaseExt {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         int countReflection = JarExtract.copy("assets/ocsensors/config/reflection", ConfigurationHandler.reflectionDataDir);
-        sender.addChatMessage(new TextComponentString("Extracted "+countReflection+" reflection integration configs"));
+        sender.sendMessage(new TextComponentString("Extracted "+countReflection+" reflection integration configs"));
 
         int countNbt = JarExtract.copy("assets/ocsensors/config/nbt", ConfigurationHandler.nbtDataDir);
-        sender.addChatMessage(new TextComponentString("Extracted "+countNbt+" nbt integration configs"));
+        sender.sendMessage(new TextComponentString("Extracted "+countNbt+" nbt integration configs"));
 
         int countJs = JarExtract.copy("assets/ocsensors/config/javascript", ConfigurationHandler.nashornDataDir);
-        sender.addChatMessage(new TextComponentString("Extracted "+countJs+" javascript integration configs"));
+        sender.sendMessage(new TextComponentString("Extracted "+countJs+" javascript integration configs"));
     }
 }

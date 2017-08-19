@@ -8,7 +8,7 @@ public class CommandOCSensors extends CommandMenu {
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "ocsensors";
     }
 }

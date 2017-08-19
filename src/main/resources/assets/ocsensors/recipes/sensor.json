@@ -1,0 +1,28 @@
+{
+  "result": {
+    "item": "ocsensors:sensor",
+    "count": 1
+  },
+  "pattern": [
+    " e ",
+    " c ",
+    "iai"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "e": {
+      "item": "minecraft:ender_pearl"
+    },
+    "c": {
+      "item": "opencomputers:cable",
+      "data": 0
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "a": {
+      "item": "opencomputers:adapter",
+      "data": 0
+    }
+  }
+}
