@@ -13,8 +13,9 @@ import java.util.Map;
 
 public class IntegrationRegistry {
     private static List<AbstractIntegration> integrations = new ArrayList<>();
+    private static ASMDataTable asmData;
 
-    public static void registerIntegrations(ASMDataTable asmData) {
+    public static void registerIntegrations() {
         for(AbstractIntegration integration : AnnotatedInstanceUtil.getIntegrations(asmData)) {
             Logz.info("Registering integration class: %s", integration.getClass());
             integration.init();
@@ -51,5 +52,9 @@ public class IntegrationRegistry {
         }
 
         return null;
+    }
+
+    public static void setAsmData(ASMDataTable asmData) {
+        IntegrationRegistry.asmData = asmData;
     }
 }
