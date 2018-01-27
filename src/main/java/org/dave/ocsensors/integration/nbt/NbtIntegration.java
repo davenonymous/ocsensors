@@ -1,6 +1,7 @@
 package org.dave.ocsensors.integration.nbt;
 
 import com.google.gson.stream.JsonReader;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -53,6 +54,17 @@ public class NbtIntegration extends AbstractIntegration {
     }
 
     @Override
+    public boolean worksWith(Entity entity) {
+        for(Class clazz : this.mappings.keySet()) {
+            if(clazz.isAssignableFrom(entity.getClass())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean worksWith(TileEntity entity, @Nullable EnumFacing side) {
         for(Class clazz : this.mappings.keySet()) {
             if(clazz.isAssignableFrom(entity.getClass())) {
@@ -61,6 +73,28 @@ public class NbtIntegration extends AbstractIntegration {
         }
 
         return false;
+    }
+
+    @Override
+    public void addScanData(ScanDataList data, Entity entity) {
+        NBTTagCompound tag = new NBTTagCompound();
+        entity.writeToNBT(tag);
+
+        for(Map.Entry<Class, Map<String, String>> entry : this.mappings.entrySet()) {
+            if(!entry.getKey().isAssignableFrom(entity.getClass())) {
+                continue;
+            }
+
+            for(Map.Entry<String, String> rule : entry.getValue().entrySet()) {
+                String propertyPath = rule.getKey();
+                String fieldPath = rule.getValue();
+
+                Object value = recurseNbtTag(tag, fieldPath);
+                if(value != null) {
+                    data.add(propertyPath, value);
+                }
+            }
+        }
     }
 
     @Override

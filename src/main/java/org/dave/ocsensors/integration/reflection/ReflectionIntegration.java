@@ -1,6 +1,7 @@
 package org.dave.ocsensors.integration.reflection;
 
 import com.google.gson.stream.JsonReader;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -90,14 +91,30 @@ public class ReflectionIntegration extends AbstractIntegration {
         return false;
     }
 
+    @Override
+    public boolean worksWith(Entity entity) {
+        if(methodMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
+            return true;
+        }
 
+        if(fieldMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
+            return true;
+        }
+
+        if(privateFieldMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
+            return true;
+        }
+
+        return false;
+
+    }
 
     @FunctionalInterface
     interface Function2 <C, A, B> {
         public void apply (C c, A a, B b);
     }
 
-    public static void processMapping(TileEntity entity, Map<Class, Map<String, String>> mapping, Function2<Class, String, String> f) {
+    private static void processMapping(TileEntity entity, Map<Class, Map<String, String>> mapping, Function2<Class, String, String> f) {
         for(Map.Entry<Class, Map<String, String>> entry : mapping.entrySet()) {
             Class clazz = entry.getKey();
             if (!clazz.isAssignableFrom(entity.getClass())) {
@@ -112,7 +129,6 @@ public class ReflectionIntegration extends AbstractIntegration {
             }
         }
     }
-
 
     @Override
     public void addScanData(ScanDataList data, TileEntity entity, @Nullable EnumFacing side) {
@@ -136,5 +152,47 @@ public class ReflectionIntegration extends AbstractIntegration {
         processMapping(entity, this.privateFieldMappings, (clazz, propertyPath, privateFieldName) -> {
             data.add(propertyPath, ObfuscationReflectionHelper.getPrivateValue(clazz, entity, privateFieldName));
         });
+    }
+
+    private static void processMapping(Entity entity, Map<Class, Map<String, String>> mapping, Function2<Class, String, String> f) {
+        for(Map.Entry<Class, Map<String, String>> entry : mapping.entrySet()) {
+            Class clazz = entry.getKey();
+            if (!clazz.isAssignableFrom(entity.getClass())) {
+                continue;
+            }
+
+            for(Map.Entry<String, String> rule : entry.getValue().entrySet()) {
+                String propertyPath = rule.getKey();
+                String fieldPath = rule.getValue();
+
+                f.apply(clazz, propertyPath, fieldPath);
+            }
+        }
+    }
+
+
+    @Override
+    public void addScanData(ScanDataList data, Entity entity) {
+        processMapping(entity, this.methodMappings, (clazz, propertyPath, methodName) -> {
+            try {
+                data.add(propertyPath, clazz.getDeclaredMethod(methodName).invoke(entity));
+            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException e) {
+            } catch (NoSuchMethodException e) {
+            }
+        });
+
+        processMapping(entity, this.fieldMappings, (clazz, propertyPath, fieldName) -> {
+            try {
+                data.add(propertyPath, clazz.getField(fieldName).get(entity));
+            } catch (IllegalAccessException e) {
+            } catch (NoSuchFieldException e) {
+            }
+        });
+
+        processMapping(entity, this.privateFieldMappings, (clazz, propertyPath, privateFieldName) -> {
+            data.add(propertyPath, ObfuscationReflectionHelper.getPrivateValue(clazz, entity, privateFieldName));
+        });
+
     }
 }

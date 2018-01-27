@@ -119,6 +119,13 @@ public class ConfigurationHandler {
                 "How long it takes to scan a normal block in seconds"
         );
 
+        SensorSettings.pauseForEntity = configuration.getFloat(
+                "pauseForEntity",
+                CATEGORY_SENSOR,
+                0.1f, 0.0f, 4.0f,
+                "How long it takes to scan an entity in seconds"
+        );
+
         SensorSettings.pauseForTileEntity = configuration.getFloat(
                 "pauseForTileEntity",
                 CATEGORY_SENSOR,
@@ -131,6 +138,13 @@ public class ConfigurationHandler {
                 CATEGORY_SENSOR,
                 0.0001f, 0.0f, 1.0f,
                 "Each block being scanned increases the search time by this amount"
+        );
+
+        SensorSettings.hideSneakingEntities = configuration.getBoolean(
+                "hideSneakingEntities",
+                CATEGORY_SENSOR,
+                true,
+                "Whether to remove Entities that are sneaking from the results"
         );
 
         IntegrationSettings.disabledIntegrations = Arrays.asList(configuration.getStringList(
@@ -154,11 +168,14 @@ public class ConfigurationHandler {
         public static float maxSearchRange;
         public static float pauseForAirBlock;
         public static float pauseForBlock;
+        public static float pauseForEntity;
         public static float pauseForTileEntity;
         public static float pauseForSearchPerBlock;
 
         public static boolean disableSearch;
         public static boolean disableScanPause;
         public static boolean disableSearchPause;
+
+        public static boolean hideSneakingEntities;
     }
 }

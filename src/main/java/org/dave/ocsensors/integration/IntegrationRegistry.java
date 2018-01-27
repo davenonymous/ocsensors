@@ -1,5 +1,6 @@
 package org.dave.ocsensors.integration;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
@@ -29,6 +30,19 @@ public class IntegrationRegistry {
         for(AbstractIntegration integration : integrations) {
             integration.reload();
         }
+    }
+
+    public static Map<String, Object> getDataForEntity(Entity entity) {
+        ScanDataList result = new ScanDataList();
+        for(AbstractIntegration integration : integrations) {
+            if(!integration.worksWith(entity)) {
+                continue;
+            }
+
+            integration.addScanData(result, entity);
+        }
+
+        return result.getData();
     }
 
     public static Map<String, Object> getDataForTileEntity(TileEntity entity, @Nullable EnumFacing side) {

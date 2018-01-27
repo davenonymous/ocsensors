@@ -5,19 +5,24 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.dave.ocsensors.base.TileEntitySidedEnvironmentBase;
 import org.dave.ocsensors.integration.AbstractIntegration;
 import org.dave.ocsensors.integration.IntegrationRegistry;
 import org.dave.ocsensors.misc.ConfigurationHandler;
+import org.dave.ocsensors.utility.Logz;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
 
@@ -33,6 +38,61 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
     @Callback(getter = true, doc = "Maximum range the sensor can search for specific blocks")
     public Object[] searchRange(final Context context, final Arguments args) {
         return new Object[] {ConfigurationHandler.SensorSettings.maxSearchRange};
+    }
+
+    @Callback(limit = 1, doc = "function(x1:number, y1:number, z1:number, x2:number, y2:number, z3:number):table -- Scans a region relative to the sensor for entities")
+    public Object[] searchEntities(final Context context, final Arguments args) {
+        int xDelta1 = args.checkInteger(0);
+        int yDelta1 = args.checkInteger(1);
+        int zDelta1 = args.checkInteger(2);
+        int xDelta2 = args.checkInteger(3);
+        int yDelta2 = args.checkInteger(4);
+        int zDelta2 = args.checkInteger(5);
+
+        BlockPos startPoint = this.getPos().add(xDelta1, yDelta1, zDelta1);
+        BlockPos endPoint = this.getPos().add(xDelta2, yDelta2, zDelta2);
+        AxisAlignedBB boundingBox = new AxisAlignedBB(startPoint, endPoint);
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for(Entity entity : this.getWorld().getEntitiesWithinAABB(Entity.class, boundingBox)) {
+            if(!ConfigurationHandler.SensorSettings.disableScanPause) {
+                context.pause(ConfigurationHandler.SensorSettings.pauseForEntity);
+            }
+
+            if(ConfigurationHandler.SensorSettings.hideSneakingEntities && entity instanceof EntityLivingBase && entity.isSneaking()) {
+                continue;
+            }
+
+            Map<String, Object> entityData = IntegrationRegistry.getDataForEntity(entity);
+            if(!entityData.containsKey("type")) {
+                if (entity instanceof EntityItem) {
+                    entityData.put("type", "item");
+                }
+                if (entity instanceof EntityLivingBase) {
+                    entityData.put("type", "neutral");
+                }
+                if (entity instanceof EntityMob) {
+                    entityData.put("type", "mob");
+                }
+                if (entity instanceof EntityPlayer) {
+                    entityData.put("type", "player");
+                }
+            }
+
+            if(!entityData.containsKey("type")) {
+                continue;
+            }
+
+            HashMap<String, Double> posMap = new HashMap<>();
+            posMap.put("x", entity.getPositionVector().x - this.getPos().getX());
+            posMap.put("y", entity.getPositionVector().y - this.getPos().getY());
+            posMap.put("z", entity.getPositionVector().z - this.getPos().getZ());
+
+            entityData.put("pos", posMap);
+            result.add(entityData);
+        }
+
+        return new Object[] { result };
     }
 
     @Callback(limit = 1, doc = "function(x:number, y:number, z:number, [side:number]):table -- Scans a block relative to the sensor")
