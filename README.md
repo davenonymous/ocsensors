@@ -99,3 +99,23 @@ while(true) do
     os.sleep(1)
 end
 ```
+
+### Dump the fluid of all nearby MooFluid cows
+```lua
+local component = require('component')
+local serialization = require('serialization')
+
+local sensor = component.sensor
+
+local range = 5
+
+local foundFluids = {}
+for _, entity in ipairs(sensor.searchEntities(-range, -range, -range, range, range, range)) do
+    if(entity.type == "neutral" and entity.moofluids ~= nil) then
+        foundFluids[#foundFluids+1] = entity.moofluids.fluid.name
+    end
+end
+
+print(serialization.serialize(foundFluids))
+-- {"lava", "lava", "lava", "water", "water", "lava"}
+```
