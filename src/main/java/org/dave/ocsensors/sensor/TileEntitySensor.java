@@ -128,8 +128,7 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
                 context.pause(ConfigurationHandler.SensorSettings.pauseForBlock);
             }
             ItemStack stack = block.getPickBlock(state, null, this.getWorld(), pos, null);
-            // TODO: 1.11.2 itemstack is empty
-            if(stack != null) {
+            if(!stack.isEmpty()) {
                 blockInfo.put("label", stack.getDisplayName());
             } else {
                 blockInfo.put("label", block.getRegistryName());
