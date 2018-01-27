@@ -26,8 +26,5 @@ public class CommandExtractConfigs extends CommandBaseExt {
 
         int countNbt = JarExtract.copy("assets/ocsensors/config/nbt", ConfigurationHandler.nbtDataDir);
         sender.sendMessage(new TextComponentString("Extracted "+countNbt+" nbt integration configs"));
-
-        int countJs = JarExtract.copy("assets/ocsensors/config/javascript", ConfigurationHandler.nashornDataDir);
-        sender.sendMessage(new TextComponentString("Extracted "+countJs+" javascript integration configs"));
     }
 }

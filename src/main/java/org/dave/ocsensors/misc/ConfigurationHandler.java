@@ -42,11 +42,6 @@ public class ConfigurationHandler {
             reflectionDataDir.mkdirs();
         }
 
-        nashornDataDir = new File(configDir, "javascript");
-        if(!nashornDataDir.exists()) {
-            nashornDataDir.mkdirs();
-        }
-
         configuration = new Configuration(new File(configDir, "settings.cfg"), null);
         loadConfiguration();
     }
@@ -141,7 +136,7 @@ public class ConfigurationHandler {
         IntegrationSettings.disabledIntegrations = Arrays.asList(configuration.getStringList(
                 "disabledIntegrations",
                 CATEGORY_INTEGRATIONS,
-                new String[] {"javascript"},
+                new String[] {},
                 "These integrations are not being loaded. Changing this requires restarting the game!"
         ));
 
