@@ -1,0 +1,11 @@
+[
+  {
+    "class": "com.robrit.moofluids.common.entity.EntityFluidCow",
+    "prefix": "moofluids",
+
+    "methods": {
+      "fluid": "getEntityFluid",
+      "cooldown": "getNextUseCooldown"
+    }
+  }
+]

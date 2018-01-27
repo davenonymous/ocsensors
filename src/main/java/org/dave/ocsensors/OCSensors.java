@@ -9,11 +9,12 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.dave.ocsensors.command.CommandOCSensors;
+import org.dave.ocsensors.converter.ConverterFluid;
 import org.dave.ocsensors.integration.IntegrationRegistry;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.proxy.CommonProxy;
 
-@Mod(modid = OCSensors.MODID, version = OCSensors.VERSION, dependencies = "required-after:opencomputers", acceptedMinecraftVersions = "[1.12,1.13)")
+@Mod(modid = OCSensors.MODID, version = OCSensors.VERSION, dependencies = "after:*;required-after:opencomputers", acceptedMinecraftVersions = "[1.12,1.13)")
 public class OCSensors {
     public static final String MODID = "ocsensors";
     public static final String VERSION = "1.0.0";
@@ -34,6 +35,8 @@ public class OCSensors {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+        li.cil.oc.api.Driver.add(new ConverterFluid());
+
         proxy.init(event);
     }
 

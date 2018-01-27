@@ -85,9 +85,10 @@ public class ReflectionIntegration extends AbstractIntegration {
 
     private void addUniversalScanData(ScanDataList data, Object entity) {
         for(Map.Entry<Class, Map<String, IReflectionMapping>> entry : classMappings.entrySet()) {
-            Class clazz = entry.getClass();
+            Class clazz = entry.getKey();
             Map<String, IReflectionMapping> entriesForClazz = entry.getValue();
 
+            // Logz.info("Is %s assignable from %s = %s", clazz.getName(), entity.getClass().getName(), clazz.isAssignableFrom(entity.getClass()));
             if(!clazz.isAssignableFrom(entity.getClass())) {
                 continue;
             }
