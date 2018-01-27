@@ -83,40 +83,36 @@ public class ReflectionIntegration extends AbstractIntegration {
         return supportedClasses.stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()));
     }
 
+    private void addUniversalScanData(ScanDataList data, Object entity) {
+        for(Map.Entry<Class, Map<String, IReflectionMapping>> entry : classMappings.entrySet()) {
+            Class clazz = entry.getClass();
+            Map<String, IReflectionMapping> entriesForClazz = entry.getValue();
+
+            if(!clazz.isAssignableFrom(entity.getClass())) {
+                continue;
+            }
+
+            for (Map.Entry<String, IReflectionMapping> mappingEntry : entriesForClazz.entrySet()) {
+                String propertyPath = mappingEntry.getKey();
+                IReflectionMapping mapping = mappingEntry.getValue();
+                if(!mapping.isValid()) {
+                    continue;
+                }
+
+                data.add(propertyPath, mapping.getResult(clazz, entity));
+            }
+        }
+    }
 
     @Override
     public void addScanData(ScanDataList data, TileEntity entity, @Nullable EnumFacing side) {
-        for(Map.Entry<Class, Map<String, IReflectionMapping>> entry : classMappings.entrySet()) {
-            Class clazz = entry.getClass();
-            Map<String, IReflectionMapping> entriesForClazz = entry.getValue();
-
-            for (Map.Entry<String, IReflectionMapping> mappingEntry : entriesForClazz.entrySet()) {
-                String propertyPath = mappingEntry.getKey();
-                IReflectionMapping mapping = mappingEntry.getValue();
-
-                data.add(propertyPath, mapping.getResult(clazz, entity));
-            }
-        }
+        addUniversalScanData(data, entity);
     }
-
-
 
     @Override
     public void addScanData(ScanDataList data, Entity entity) {
-        for(Map.Entry<Class, Map<String, IReflectionMapping>> entry : classMappings.entrySet()) {
-            Class clazz = entry.getClass();
-            Map<String, IReflectionMapping> entriesForClazz = entry.getValue();
-
-            for (Map.Entry<String, IReflectionMapping> mappingEntry : entriesForClazz.entrySet()) {
-                String propertyPath = mappingEntry.getKey();
-                IReflectionMapping mapping = mappingEntry.getValue();
-
-                data.add(propertyPath, mapping.getResult(clazz, entity));
-            }
-        }
-
+        addUniversalScanData(data, entity);
     }
-
 
     private interface IReflectionMapping {
         Object getResult(Class clz, Object entity);

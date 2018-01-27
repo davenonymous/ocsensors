@@ -1,0 +1,8 @@
+[
+  {
+    "class": "net.minecraft.entity.item.EntityItem",
+    "methods": {
+      "item": { "obf": "func_92059_d", "deobf": "getItem" }
+    }
+  }
+]
