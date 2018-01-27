@@ -35,6 +35,7 @@ public class NbtIntegration extends AbstractIntegration {
             return;
         }
 
+        // TODO: Switch to ResourceLoader class
         for (File file : ConfigurationHandler.nbtDataDir.listFiles()) {
             try {
                 Serialization.GSON.fromJson(new JsonReader(new FileReader(file)), NbtConfig.class);

@@ -47,19 +47,22 @@ public class ReflectionConfigSerializer implements JsonDeserializer<ReflectionCo
 
             if(teObject.has("methods")) {
                 for(Map.Entry<String, JsonElement> rule : teObject.get("methods").getAsJsonObject().entrySet()) {
-                    ReflectionIntegration.addMethodMapping(mappingClass, prefix + rule.getKey(), rule.getValue().getAsString());
+                    if(rule.getValue().isJsonObject() && rule.getValue().getAsJsonObject().has("obf") && rule.getValue().getAsJsonObject().has("deobf")) {
+                        String obfName = rule.getValue().getAsJsonObject().get("obf").getAsString();
+                        String deobfName = rule.getValue().getAsJsonObject().get("deobf").getAsString();
+                        ReflectionIntegration.addMethodMapping(mappingClass, prefix + rule.getKey(), deobfName, obfName);
+                    } else if(rule.getValue().isJsonPrimitive()) {
+                        String methodName = rule.getValue().getAsString();
+                        ReflectionIntegration.addMethodMapping(mappingClass, prefix + rule.getKey(), methodName, methodName);
+                    } else {
+                        Logz.warn("Invalid method specification for class '%s' in reflection config.", className);
+                    }
                 }
             }
 
             if(teObject.has("fields")) {
                 for(Map.Entry<String, JsonElement> rule : teObject.get("fields").getAsJsonObject().entrySet()) {
                     ReflectionIntegration.addFieldMapping(mappingClass, prefix + rule.getKey(), rule.getValue().getAsString());
-                }
-            }
-
-            if(teObject.has("privateFields")) {
-                for(Map.Entry<String, JsonElement> rule : teObject.get("privateFields").getAsJsonObject().entrySet()) {
-                    ReflectionIntegration.addPrivateFieldMapping(mappingClass, prefix + rule.getKey(), rule.getValue().getAsString());
                 }
             }
         }

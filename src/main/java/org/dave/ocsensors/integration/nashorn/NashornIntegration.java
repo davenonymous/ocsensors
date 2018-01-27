@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Remove Nashorn integration
 @Integrate(name = "javascript")
 public class NashornIntegration extends AbstractIntegration {
     private List<Invocable> scripts;

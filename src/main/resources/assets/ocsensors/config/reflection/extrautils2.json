@@ -4,12 +4,10 @@
     "prefix": "extrautils2",
 
     "methods": {
-      "isProcessing": "isProcessing"
-    },
-    "privateFields": {
-      "processTime": "processTime"
+      "isProcessing": { "obf": "isProcessing", "deobf": "isProcessing" }
     },
     "fields": {
+      "processTime": "processTime",
       "energyOutput": "energyOutput",
       "totalTime": "totalTime"
     }

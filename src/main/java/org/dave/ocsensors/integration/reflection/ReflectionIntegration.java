@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.dave.ocsensors.integration.AbstractIntegration;
 import org.dave.ocsensors.integration.Integrate;
 import org.dave.ocsensors.integration.PrefixRegistry;
@@ -17,27 +18,31 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Integrate(name = "reflection")
 public class ReflectionIntegration extends AbstractIntegration {
-    private static Map<Class, Map<String, String>> methodMappings;
-    private static Map<Class, Map<String, String>> fieldMappings;
-    private static Map<Class, Map<String, String>> privateFieldMappings;
+    private static Map<Class, Map<String, IReflectionMapping>> classMappings;
+    private static Set<Class> supportedClasses;
 
     @Override
     public void reload() {
-        this.methodMappings = new HashMap<>();
-        this.fieldMappings = new HashMap<>();
-        this.privateFieldMappings = new HashMap<>();
+        this.classMappings = new HashMap<>();
+        this.supportedClasses = new HashSet<>();
+
         PrefixRegistry.clearSupportedPrefixes(ReflectionIntegration.class);
 
         if(!ConfigurationHandler.reflectionDataDir.exists()) {
             return;
         }
 
+        // TODO: Switch to ResourceLoader class
         for (File file : ConfigurationHandler.reflectionDataDir.listFiles()) {
             try {
                 Serialization.GSON.fromJson(new JsonReader(new FileReader(file)), ReflectionConfig.class);
@@ -48,151 +53,141 @@ public class ReflectionIntegration extends AbstractIntegration {
         }
     }
 
-    public static void addMethodMapping(Class clazz, String propertyPath, String methodName) {
-        if(!methodMappings.containsKey(clazz)) {
-            methodMappings.put(clazz, new HashMap<>());
+    private static void initClassMapping(Class clazz) {
+        if(!supportedClasses.contains(clazz)) {
+            supportedClasses.add(clazz);
         }
 
-        methodMappings.get(clazz).put(propertyPath, methodName);
+        if(!classMappings.containsKey(clazz)) {
+            classMappings.put(clazz, new HashMap<>());
+        }
+    }
+
+    public static void addMethodMapping(Class clazz, String propertyPath, String methodName, String obfName) {
+        initClassMapping(clazz);
+
+        classMappings.get(clazz).put(propertyPath, new MethodMapping(clazz, methodName, obfName));
     }
 
     public static void addFieldMapping(Class clazz, String propertyPath, String fieldName) {
-        if(!fieldMappings.containsKey(clazz)) {
-            fieldMappings.put(clazz, new HashMap<>());
-        }
+        initClassMapping(clazz);
 
-        fieldMappings.get(clazz).put(propertyPath, fieldName);
+        classMappings.get(clazz).put(propertyPath, new FieldMapping(clazz, fieldName));
     }
-
-    public static void addPrivateFieldMapping(Class clazz, String propertyPath, String methodName) {
-        if(!privateFieldMappings.containsKey(clazz)) {
-            privateFieldMappings.put(clazz, new HashMap<>());
-        }
-
-        privateFieldMappings.get(clazz).put(propertyPath, methodName);
-    }
-
-
 
     @Override
     public boolean worksWith(TileEntity entity, @Nullable EnumFacing side) {
-        if(methodMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
-            return true;
-        }
-
-        if(fieldMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
-            return true;
-        }
-
-        if(privateFieldMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
-            return true;
-        }
-
-        return false;
+        return supportedClasses.stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()));
     }
 
     @Override
     public boolean worksWith(Entity entity) {
-        if(methodMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
-            return true;
-        }
-
-        if(fieldMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
-            return true;
-        }
-
-        if(privateFieldMappings.keySet().stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()))) {
-            return true;
-        }
-
-        return false;
-
+        return supportedClasses.stream().anyMatch(c -> c.isAssignableFrom(entity.getClass()));
     }
 
-    @FunctionalInterface
-    interface Function2 <C, A, B> {
-        public void apply (C c, A a, B b);
-    }
-
-    private static void processMapping(TileEntity entity, Map<Class, Map<String, String>> mapping, Function2<Class, String, String> f) {
-        for(Map.Entry<Class, Map<String, String>> entry : mapping.entrySet()) {
-            Class clazz = entry.getKey();
-            if (!clazz.isAssignableFrom(entity.getClass())) {
-                continue;
-            }
-
-            for(Map.Entry<String, String> rule : entry.getValue().entrySet()) {
-                String propertyPath = rule.getKey();
-                String fieldPath = rule.getValue();
-
-                f.apply(clazz, propertyPath, fieldPath);
-            }
-        }
-    }
 
     @Override
     public void addScanData(ScanDataList data, TileEntity entity, @Nullable EnumFacing side) {
-        processMapping(entity, this.methodMappings, (clazz, propertyPath, methodName) -> {
-            try {
-                data.add(propertyPath, clazz.getDeclaredMethod(methodName).invoke(entity));
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
-            } catch (NoSuchMethodException e) {
-            }
-        });
+        for(Map.Entry<Class, Map<String, IReflectionMapping>> entry : classMappings.entrySet()) {
+            Class clazz = entry.getClass();
+            Map<String, IReflectionMapping> entriesForClazz = entry.getValue();
 
-        processMapping(entity, this.fieldMappings, (clazz, propertyPath, fieldName) -> {
-            try {
-                data.add(propertyPath, clazz.getField(fieldName).get(entity));
-            } catch (IllegalAccessException e) {
-            } catch (NoSuchFieldException e) {
-            }
-        });
+            for (Map.Entry<String, IReflectionMapping> mappingEntry : entriesForClazz.entrySet()) {
+                String propertyPath = mappingEntry.getKey();
+                IReflectionMapping mapping = mappingEntry.getValue();
 
-        processMapping(entity, this.privateFieldMappings, (clazz, propertyPath, privateFieldName) -> {
-            data.add(propertyPath, ObfuscationReflectionHelper.getPrivateValue(clazz, entity, privateFieldName));
-        });
-    }
-
-    private static void processMapping(Entity entity, Map<Class, Map<String, String>> mapping, Function2<Class, String, String> f) {
-        for(Map.Entry<Class, Map<String, String>> entry : mapping.entrySet()) {
-            Class clazz = entry.getKey();
-            if (!clazz.isAssignableFrom(entity.getClass())) {
-                continue;
-            }
-
-            for(Map.Entry<String, String> rule : entry.getValue().entrySet()) {
-                String propertyPath = rule.getKey();
-                String fieldPath = rule.getValue();
-
-                f.apply(clazz, propertyPath, fieldPath);
+                data.add(propertyPath, mapping.getResult(clazz, entity));
             }
         }
     }
+
 
 
     @Override
     public void addScanData(ScanDataList data, Entity entity) {
-        processMapping(entity, this.methodMappings, (clazz, propertyPath, methodName) -> {
+        for(Map.Entry<Class, Map<String, IReflectionMapping>> entry : classMappings.entrySet()) {
+            Class clazz = entry.getClass();
+            Map<String, IReflectionMapping> entriesForClazz = entry.getValue();
+
+            for (Map.Entry<String, IReflectionMapping> mappingEntry : entriesForClazz.entrySet()) {
+                String propertyPath = mappingEntry.getKey();
+                IReflectionMapping mapping = mappingEntry.getValue();
+
+                data.add(propertyPath, mapping.getResult(clazz, entity));
+            }
+        }
+
+    }
+
+
+    private interface IReflectionMapping {
+        Object getResult(Class clz, Object entity);
+
+        boolean isValid();
+    }
+
+    private static class MethodMapping implements IReflectionMapping {
+        private String methodName;
+        private Method method = null;
+
+        public MethodMapping(Class clz, String methodName, String obfMethodName) {
+            this.methodName = methodName;
             try {
-                data.add(propertyPath, clazz.getDeclaredMethod(methodName).invoke(entity));
+                this.method = ReflectionHelper.findMethod(clz, methodName, obfMethodName);
+            } catch(ReflectionHelper.UnableToFindMethodException e) {
+                Logz.warn("Could not find method '%s' in class '%s'! Exception=%s", this.methodName, clz.getName(), e);
+            }
+        }
+
+        @Override
+        public Object getResult(Class clz, Object entity) {
+            try {
+                return this.method.invoke(entity);
             } catch (IllegalAccessException e) {
             } catch (InvocationTargetException e) {
-            } catch (NoSuchMethodException e) {
             }
-        });
 
-        processMapping(entity, this.fieldMappings, (clazz, propertyPath, fieldName) -> {
+            return null;
+        }
+
+        @Override
+        public boolean isValid() {
+            return this.method != null;
+        }
+    }
+
+    private static class FieldMapping implements IReflectionMapping {
+        private String fieldName;
+        private Field field = null;
+
+        public FieldMapping(Class clz, String fieldName) {
+            this.fieldName = fieldName;
+            String[] obfNames = ObfuscationReflectionHelper.remapFieldNames(clz.getName(), fieldName);
+            if(obfNames.length == 0) {
+                return;
+            }
+
             try {
-                data.add(propertyPath, clazz.getField(fieldName).get(entity));
-            } catch (IllegalAccessException e) {
-            } catch (NoSuchFieldException e) {
+                this.field = ReflectionHelper.findField(clz, obfNames);
+            } catch (ReflectionHelper.UnableToFindFieldException e) {
+                Logz.warn("Could not find field '%s' in class '%s'! Exception=%s", this.fieldName, clz.getName(), e);
+                this.field = null;
             }
-        });
 
-        processMapping(entity, this.privateFieldMappings, (clazz, propertyPath, privateFieldName) -> {
-            data.add(propertyPath, ObfuscationReflectionHelper.getPrivateValue(clazz, entity, privateFieldName));
-        });
+        }
 
+        @Override
+        public Object getResult(Class clz, Object entity) {
+            try {
+                return this.field.get(entity);
+            } catch (IllegalAccessException e) {
+                return null;
+            }
+        }
+
+        @Override
+        public boolean isValid() {
+            return field != null;
+        }
     }
 }
