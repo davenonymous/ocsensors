@@ -9,6 +9,7 @@ computers to scan surrounding blocks.
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | scan(x:number, y:number, z:number, [side:number])                                     | Scans a block relative to the sensor                             |
 | search([name:string=""], [meta:number=-1], [section:string=""], [range:number=<max>]) | Search for blocks matching the given criteria in the given range |
+| searchEntities(x1:number, y1:number, z1:number, x2:number, y2:number, z3:number)      | Scans a region relative to the sensor for entities               |
 
 ## Examples
 
