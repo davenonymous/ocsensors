@@ -35,25 +35,16 @@ public class ConfigurationHandler {
         nbtDataDir = new File(configDir, "nbt");
         if(!nbtDataDir.exists()) {
             nbtDataDir.mkdirs();
-
-            int count = JarExtract.copy("assets/ocsensors/config/nbt", nbtDataDir);
-            Logz.info("Extracted %d nbt integration configs", count);
         }
 
         reflectionDataDir = new File(configDir, "reflection");
         if(!reflectionDataDir.exists()) {
             reflectionDataDir.mkdirs();
-
-            int count = JarExtract.copy("assets/ocsensors/config/reflection", reflectionDataDir);
-            Logz.info("Extracted %d reflection integration configs", count);
         }
 
         nashornDataDir = new File(configDir, "javascript");
         if(!nashornDataDir.exists()) {
             nashornDataDir.mkdirs();
-
-            int count = JarExtract.copy("assets/ocsensors/config/javascript", nashornDataDir);
-            Logz.info("Extracted %d javascript integrations", count);
         }
 
         configuration = new Configuration(new File(configDir, "settings.cfg"), null);

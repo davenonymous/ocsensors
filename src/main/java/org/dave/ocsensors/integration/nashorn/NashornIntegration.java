@@ -10,14 +10,18 @@ import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.integration.ScanDataList;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.utility.Logz;
+import org.dave.ocsensors.utility.ResourceLoader;
 
 import javax.annotation.Nullable;
-import javax.script.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // TODO: Remove Nashorn integration
 @Integrate(name = "javascript")
@@ -33,12 +37,15 @@ public class NashornIntegration extends AbstractIntegration {
             return;
         }
 
-        for (File file : ConfigurationHandler.nashornDataDir.listFiles()) {
-            Logz.info(" > Loading javascript integration from file: '%s'", file.getName());
+        ResourceLoader loader = new ResourceLoader(ConfigurationHandler.nashornDataDir, "assets/ocsensors/config/javascript/");
+        for(Map.Entry<String, InputStream> entry : loader.getResources().entrySet()) {
+            String filename = entry.getKey();
+            InputStream is = entry.getValue();
 
+            Logz.info(" > Loading javascript integration from file: '%s'", filename);
             ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
             try {
-                engine.eval(new FileReader(file));
+                engine.eval(new InputStreamReader(is));
                 this.scripts.add((Invocable) engine);
 
                 JSObject supportedPrefixes = (JSObject) ((Invocable) engine).invokeFunction("getSupportedPrefixes");
@@ -49,12 +56,10 @@ public class NashornIntegration extends AbstractIntegration {
                     }
                 }
             } catch (ScriptException e) {
-                Logz.warn("Could not compile+eval script: %s", file.getName());
+                Logz.warn("Could not compile+eval script: %s", filename);
                 continue;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (NoSuchMethodException e) {
-                Logz.warn("Script %s is missing a method: %s", file.getName(), e);
+                Logz.warn("Script %s is missing a method: %s", filename, e);
             }
         }
     }

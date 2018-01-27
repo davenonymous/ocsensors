@@ -12,12 +12,11 @@ import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.integration.ScanDataList;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.utility.Logz;
+import org.dave.ocsensors.utility.ResourceLoader;
 import org.dave.ocsensors.utility.Serialization;
 
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,14 +41,13 @@ public class ReflectionIntegration extends AbstractIntegration {
             return;
         }
 
-        // TODO: Switch to ResourceLoader class
-        for (File file : ConfigurationHandler.reflectionDataDir.listFiles()) {
-            try {
-                Serialization.GSON.fromJson(new JsonReader(new FileReader(file)), ReflectionConfig.class);
-            } catch (FileNotFoundException e) {
-            }
+        ResourceLoader loader = new ResourceLoader(ConfigurationHandler.reflectionDataDir, "assets/ocsensors/config/reflection/");
+        for(Map.Entry<String, InputStream> entry : loader.getResources().entrySet()) {
+            String filename = entry.getKey();
+            InputStream is = entry.getValue();
 
-            Logz.info(" > Loaded reflection config from file: '%s'", file.getName());
+            Logz.info(" > Loading reflection config from file: '%s'", filename);
+            Serialization.GSON.fromJson(new JsonReader(new InputStreamReader(is)), ReflectionConfig.class);
         }
     }
 
