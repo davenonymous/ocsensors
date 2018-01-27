@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.dave.ocsensors.command.CommandOCSensors;
 import org.dave.ocsensors.converter.ConverterFluid;
+import org.dave.ocsensors.converter.ConverterMerchantRecipe;
 import org.dave.ocsensors.integration.IntegrationRegistry;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.proxy.CommonProxy;
@@ -36,6 +37,7 @@ public class OCSensors {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         li.cil.oc.api.Driver.add(new ConverterFluid());
+        li.cil.oc.api.Driver.add(new ConverterMerchantRecipe());
 
         proxy.init(event);
     }

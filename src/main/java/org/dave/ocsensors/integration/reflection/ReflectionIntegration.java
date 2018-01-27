@@ -12,6 +12,7 @@ import org.dave.ocsensors.integration.PrefixRegistry;
 import org.dave.ocsensors.integration.ScanDataList;
 import org.dave.ocsensors.misc.ConfigurationHandler;
 import org.dave.ocsensors.utility.Logz;
+import org.dave.ocsensors.utility.ObfuscationReflectionHelperEx;
 import org.dave.ocsensors.utility.ResourceLoader;
 import org.dave.ocsensors.utility.Serialization;
 
@@ -157,18 +158,7 @@ public class ReflectionIntegration extends AbstractIntegration {
 
         public FieldMapping(Class clz, String fieldName) {
             this.fieldName = fieldName;
-            String[] obfNames = ObfuscationReflectionHelper.remapFieldNames(clz.getName(), fieldName);
-            if(obfNames.length == 0) {
-                return;
-            }
-
-            try {
-                this.field = ReflectionHelper.findField(clz, obfNames);
-            } catch (ReflectionHelper.UnableToFindFieldException e) {
-                Logz.warn("Could not find field '%s' in class '%s'! Exception=%s", this.fieldName, clz.getName(), e);
-                this.field = null;
-            }
-
+            this.field = ObfuscationReflectionHelperEx.findField(clz, fieldName);
         }
 
         @Override
