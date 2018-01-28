@@ -106,18 +106,13 @@ if(defined($method)) {
 
 	foreach my $rawmethod (@{$classData->{'methods'}}) {
 		if($rawmethod->{'mcp'} eq $method) {
-			printf "%s\n", $rawmethod->{'srg'};
-			exit 0;
+			printf "%d params: %s\n", $rawmethod->{'params'}, $rawmethod->{'srg'};
 		}
 
 		if($rawmethod->{'srg'} eq $method) {
 			printf "%s\n", $rawmethod->{'mcp'};
-			exit 0;
 		}
 	}
-
-	printf("Method not found :(\n");
-	exit 3;
 }
 
 

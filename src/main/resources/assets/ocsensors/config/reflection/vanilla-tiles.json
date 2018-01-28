@@ -2,7 +2,7 @@
   {
     "class": "net.minecraft.tileentity.TileEntityFurnace",
     "methods": {
-      "Furnace.isBurning": { "obf": "func_174903_a", "deobf": "isBurning" }
+      "Furnace.isBurning": { "obf": "func_145950_i", "deobf": "isBurning" }
     }
   }
 ]
