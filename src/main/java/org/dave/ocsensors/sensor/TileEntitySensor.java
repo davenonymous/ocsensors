@@ -51,7 +51,7 @@ public class TileEntitySensor extends TileEntitySidedEnvironmentBase {
 
         BlockPos startPoint = this.getPos().add(xDelta1, yDelta1, zDelta1);
         BlockPos endPoint = this.getPos().add(xDelta2, yDelta2, zDelta2);
-        AxisAlignedBB boundingBox = new AxisAlignedBB(startPoint, endPoint);
+        AxisAlignedBB boundingBox = new AxisAlignedBB(startPoint, endPoint).grow(0.5d).offset(0.5d, 0.5d, 0.5d);
 
         List<Map<String, Object>> result = new ArrayList<>();
         for(Entity entity : this.getWorld().getEntitiesWithinAABB(Entity.class, boundingBox)) {
